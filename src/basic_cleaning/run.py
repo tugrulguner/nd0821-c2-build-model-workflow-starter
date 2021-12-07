@@ -5,6 +5,7 @@ Download from W&B the raw dataset and apply some basic data cleaning, exporting 
 import argparse
 import logging
 import wandb
+import pandas as pd
 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
@@ -20,7 +21,25 @@ def go(args):
     # particular version of the artifact
     # artifact_local_path = run.use_artifact(args.input_artifact).file()
 
+    logger.info("Download the input data")
     artifact_local_path = run.use_artifact(args.input_artifact).file()
+    
+    logger.info("Reading the file with Pandas")
+    df = pd.read_csv(artifact_local_path)
+
+    df = df.dropna()
+    df = df[df['price'].between(args.min_price, args.max_price)]
+    df.to_csv('clean_sample.csv', index=False)
+    logger.info("Data cleaned and saved")
+
+    artifact = wandb.Artifact(
+     args.output_artifact,
+     type=args.output_type,
+     description=args.output_description,
+    )
+    artifact.add_file("clean_sample.csv")
+    run.log_artifact(artifact)
+    logger.info("Data uploaded to W&B")
 
 
 if __name__ == "__main__":

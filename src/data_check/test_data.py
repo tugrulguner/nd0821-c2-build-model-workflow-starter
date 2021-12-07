@@ -69,4 +69,5 @@ def test_price_range(data: pd.DataFrame, min_price: float, max_price: float):
     '''
     Checks price is in the given price range
     '''
-    assert data['price'].between(min_price, max_price)
+    df = data.dropna()
+    assert df['price'].between(min_price, max_price)

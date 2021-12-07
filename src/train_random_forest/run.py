@@ -94,13 +94,12 @@ def go(args):
     # Save model package in the MLFlow sklearn format
     if os.path.exists("random_forest_dir"):
         shutil.rmtree("random_forest_dir")
-
     ######################################
     # Save the sk_pipe pipeline as a mlflow.sklearn model in the directory "random_forest_dir"
     # HINT: use mlflow.sklearn.save_model
     # YOUR CODE HERE
     ######################################
-    mlflow.sklearn.save_model(sk_pipe, 'random_forest_dir')
+    mlflow.sklearn.save_model(sk_pipe, "random_forest_dir")
  
     logger.info("Saving model")   ######################################
     # Upload the model we just exported to W&B
@@ -113,10 +112,9 @@ def go(args):
     sklearn_artifact = wandb.Artifact(
         args.output_artifact,
         type="model_export",
-        description="Sklearn Trained model",
-        metadata=args.rf_config
+        description="Sklearn Trained model"
     )
-    sklearn_artifact.add_dir('random_forest_dir')
+    sklearn_artifact.add_dir("random_forest_dir")
     run.log_artifact(sklearn_artifact)
     logger.info("Model Uploaded")
     # Plot feature importance
